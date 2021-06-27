@@ -76,9 +76,9 @@ char curr_type[50];
 %union
 {
     int	Int;
-	char Char;
-	char *Str;
-	double Real;
+    char Char;
+    char *Str;
+    double Real;
 }
 
 %%
@@ -130,40 +130,40 @@ records: /* null */
 
 record:	RECORD r_head r_body
 	{
-		int i;
-		char temp[50];
+            int i;
+	    char temp[50];
 
-		sprintf(temp,"%%-%ds%%-%ds",type_len,name_len);
-		printf(temp,curr_type,curr_rec);
-		/* printf("%-15s%-30s",curr_type,curr_rec); */
-		for(i=0;i<total_fields;i++) printf("%s",the_values[i]);
-		printf("\n");
+	    sprintf(temp,"%%-%ds%%-%ds",type_len,name_len);
+	    printf(temp,curr_type,curr_rec);
+	    /* printf("%-15s%-30s",curr_type,curr_rec); */
+	    for(i=0;i<total_fields;i++) printf("%s",the_values[i]);
+	    printf("\n");
 	}
 	;
 
 r_head:	O_PAREN WORD COMMA WORD C_PAREN
 	{
-		int i;
-		for(i=0;i<total_fields;i++)
-		{
-			memset(the_values[i],' ',the_fields[i].size);
-			the_values[i][the_fields[i].size]='\0';
-		}
-		strcpy(curr_type,$2);
-		strcpy(curr_rec,$4);
-		free($2); free($4);
+	    int i;
+	    for(i=0;i<total_fields;i++)
+	    {
+		memset(the_values[i],' ',the_fields[i].size);
+		the_values[i][the_fields[i].size]='\0';
+	    }
+	    strcpy(curr_type,$2);
+	    strcpy(curr_rec,$4);
+	    free($2); free($4);
 	}
 	| O_PAREN WORD COMMA VALUE C_PAREN
 	{
-		int i;
-		for(i=0;i<total_fields;i++)
-		{
-			memset(the_values[i],' ',the_fields[i].size);
-			the_values[i][the_fields[i].size]='\0';
-		}
-		strcpy(curr_type,$2);
-		strcpy(curr_rec,$4);
-		free($2); free($4);
+	    int i;
+	    for(i=0;i<total_fields;i++)
+	    {
+	    	memset(the_values[i],' ',the_fields[i].size);
+		the_values[i][the_fields[i].size]='\0';
+	    }
+	    strcpy(curr_type,$2);
+	    strcpy(curr_rec,$4);
+	    free($2); free($4);
 	}
 	;
 
@@ -177,21 +177,19 @@ fields: /* null */
 
 field:	FIELD O_PAREN WORD COMMA VALUE C_PAREN
 	{
-		int i;
-		char puken[50];
-		char* pc;
-
-		for(i=0;i<total_fields;i++)
+	    int i;
+	    char puken[50];
+	    char* pc;
+            for(i=0;i<total_fields;i++)
+	    {
+	    	strcpy(puken,the_fields[i].name);
+        	for(pc=strtok(puken,".");pc;pc=strtok(NULL,"."))
 		{
-			strcpy(puken,the_fields[i].name);
-
-			for(pc=strtok(puken,".");pc;pc=strtok(NULL,"."))
-			{
-				if( !strcmp(pc,$3) )
-					strncpy(the_values[i],$5,strlen($5)<the_fields[i].size?strlen($5):the_fields[i].size-1);
-			}
+	            if( !strcmp(pc,$3) )
+			strncpy(the_values[i],$5,strlen($5)<the_fields[i].size?strlen($5):the_fields[i].size-1);
 		}
-		free($3); free($5);
+	    }
+	    free($3); free($5);
 	}
 	;
 
@@ -205,133 +203,129 @@ char  *str;
 
 /*********************************************************************/
  
-int main(int argc, char** argv)
+int 
+main(int argc, char** argv)
 {
-	int i,c;
-	int e=0;
-	char* dbname = NULL;
-	char* pc;
-	char hold[20],thing[50];
-	FILE* get_from_here = stdin;
+    int i,c;
+    int e=0;
+    char* dbname = NULL;
+    char* pc;
+    char hold[20],thing[50];
+    FILE* get_from_here = stdin;
+    type_len=15;
+    name_len=30;
 
-	type_len=15;
-	name_len=30;
-
-	while(e==0 && (c=getopt(argc,argv,"f:t:n:"))!=-1)
+    while(e==0 && (c=getopt(argc,argv,"f:t:n:"))!=-1)
+    {
+	switch(c)
 	{
-		switch(c)
+	    case 'f': dbname = (char*)strdup(optarg); break; /* db name */
+	    case 't':
+	    /* type field length max */
+	        if(sscanf(optarg,"%d",&type_len)!=1)
 		{
-		case 'f': dbname = (char*)strdup(optarg); break; /* db name */
-		case 't':
-			/* type field length max */
-			if(sscanf(optarg,"%d",&type_len)!=1)
-			{
-				fprintf(stderr,"illegal type field size --> %s\n",argv[optind]);
-				return -1;
-			}
-			break;
-		case 'n':
-			if(sscanf(optarg,"%d",&name_len)!=1)
-			{
-				fprintf(stderr,"illegal name field size --> %s\n",argv[optind]);
-				return -1;
-			}
-			break;
+		    fprintf(stderr,"illegal type field size --> %s\n",argv[optind]);
+		    return -1;
+		}
+		break;
+	    case 'n':
+		if(sscanf(optarg,"%d",&name_len)!=1)
+		{
+	            fprintf(stderr,"illegal name field size --> %s\n",argv[optind]);
+		    return -1;
+		}
+	    break;
 		default: e=1; break;
-		}
 	}
+    }
+ 
+    if(e==1)
+    {
+    	fprintf(stderr,
+		"usage: %s [-t type_length] [-n name_length] [-f dbname.db] field.size field.size ...\n",argv[0]);
+	fprintf(stderr,
+		"\nWhere dbname.db is the name of a db file to report,\n");
+	fprintf(stderr,
+		"if no -f specified, then db file read from standard in.\n");
+	fprintf(stderr,
+		"\nfield.size is the actual name of the field to print\n");
+	fprintf(stderr,
+		"size is the max size allowed for the value in the report\n");
+	fprintf(stderr,
+		"you can have more than one field used in a line on the report\n");
+	fprintf(stderr, "by specifying field.field.size (ex: OUT.INP.23 )\n");
+	fprintf(stderr,
+		"\nname_length is max length of the name field in the report\n");
+	fprintf(stderr,
+		"\ntype_length is max length of the type field in the report\n");
+	return -1;
+    }
 
-	if(e==1)
+    if(dbname)
+    {
+	if((get_from_here=fopen(dbname,"r"))==NULL)
 	{
-		fprintf(stderr,
-			"usage: %s [-t type_length] [-n name_length] [-f dbname.db] field.size field.size ...\n",argv[0]);
-		fprintf(stderr,
-			"\nWhere dbname.db is the name of a db file to report,\n");
-		fprintf(stderr,
-			"if no -f specified, then db file read from standard in.\n");
-		fprintf(stderr,
-			"\nfield.size is the actual name of the field to print\n");
-		fprintf(stderr,
-			"size is the max size allowed for the value in the report\n");
-		fprintf(stderr,
-			"you can have more than one field used in a line on the report\n");
-		fprintf(stderr, "by specifying field.field.size (ex: OUT.INP.23 )\n");
-		fprintf(stderr,
-			"\nname_length is max length of the name field in the report\n");
-		fprintf(stderr,
-			"\ntype_length is max length of the type field in the report\n");
+            fprintf(stderr,"cannot open db file %s\n",dbname);
+	    return -1;
+	}
+    }
+
+    if(optind<argc)
+    {
+	/* the user specified fields (argc-optind) */
+	the_fields=
+		(struct fields*)malloc(1+sizeof(struct fields)*(argc-optind));
+	the_values= (char**)malloc(sizeof(char*)*(argc-optind));
+	for(i=0;optind<argc;i++,optind++)
+	{
+            strcpy(hold,argv[optind]);
+	    if((pc=strrchr(hold,'.'))==NULL)
+	    {
+		fprintf(stderr,"illegal field --> %s\n",argv[optind]);
 		return -1;
+	    }
+	    *pc++='\0';
+	    the_fields[i].name=strdup(hold);
+	    if(sscanf(pc,"%d",&the_fields[i].size)!=1)
+	    {
+                fprintf(stderr,"illegal field size --> %s\n",argv[optind]);
+	    return -1;
+	    }
+	    the_values[i]=(char*)malloc(the_fields[i].size+1);
 	}
-
-	if(dbname)
+	the_fields[i].name=NULL;
+	the_fields[i].size=0;
+	total_fields=i;
+    }
+    else
+    {
+    /* the user wants the default report */
+	the_fields=default_fields;
+	the_values=(char**)malloc(sizeof(char*)*DEFAULT_TOTAL);
+	for(i=0;i<DEFAULT_TOTAL;i++)
 	{
-		if((get_from_here=fopen(dbname,"r"))==NULL)
-		{
-			fprintf(stderr,"cannot open db file %s\n",dbname);
-			return -1;
-		}
+            the_values[i]=(char*)malloc(the_fields[i].size+1);
 	}
+	    total_fields=DEFAULT_TOTAL;
+    }
 
-	if(optind<argc)
-	{
-		/* the user specified fields (argc-optind) */
-		the_fields=
-			(struct fields*)malloc(1+sizeof(struct fields)*(argc-optind));
-		the_values= (char**)malloc(sizeof(char*)*(argc-optind));
+    sprintf(thing,"%%-%ds%%-%ds",type_len,name_len);
+    printf(thing,"TYPE","NAME"); /* printf("%-15s%-30s","TYPE","NAME"); */
 
-		for(i=0;optind<argc;i++,optind++)
-		{
-			strcpy(hold,argv[optind]);
-			if((pc=strrchr(hold,'.'))==NULL)
-			{
-				fprintf(stderr,"illegal field --> %s\n",argv[optind]);
-				return -1;
-			}
+    for(i=0;i<total_fields;i++)
+    {
+        /* printf("%s:%d\n",the_fields[i].name,the_fields[i].size); */
+	memset(the_values[i],' ',the_fields[i].size);
+	the_values[i][the_fields[i].size]='\0';
+	strncpy(the_values[i],the_fields[i].name,strlen(the_fields[i].name));
+	printf("%s",the_values[i]);
+    }
+    printf("\n\n");
 
-			*pc++='\0';
-			the_fields[i].name=strdup(hold);
+    yyin=get_from_here;
+    yyparse();
 
-			if(sscanf(pc,"%d",&the_fields[i].size)!=1)
-			{
-				fprintf(stderr,"illegal field size --> %s\n",argv[optind]);
-				return -1;
-			}
-			the_values[i]=(char*)malloc(the_fields[i].size+1);
-		}
-		the_fields[i].name=NULL;
-		the_fields[i].size=0;
-		total_fields=i;
-	}
-	else
-	{
-		/* the user wants the default report */
-		the_fields=default_fields;
-		the_values=(char**)malloc(sizeof(char*)*DEFAULT_TOTAL);
-		for(i=0;i<DEFAULT_TOTAL;i++)
-		{
-			the_values[i]=(char*)malloc(the_fields[i].size+1);
-		}
-		total_fields=DEFAULT_TOTAL;
-	}
-
-	sprintf(thing,"%%-%ds%%-%ds",type_len,name_len);
-	printf(thing,"TYPE","NAME"); /* printf("%-15s%-30s","TYPE","NAME"); */
-
-	for(i=0;i<total_fields;i++)
-	{
-		/* printf("%s:%d\n",the_fields[i].name,the_fields[i].size); */
-		memset(the_values[i],' ',the_fields[i].size);
-		the_values[i][the_fields[i].size]='\0';
-		strncpy(the_values[i],the_fields[i].name,strlen(the_fields[i].name));
-		printf("%s",the_values[i]);
-	}
-	printf("\n\n");
-
-	yyin=get_from_here;
-	yyparse();
-
-            /*fclose(get_from_here);*/
-
-	return 0;
+    /*fclose(get_from_here);*/
+    return 0;
 }
 

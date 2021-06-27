@@ -2,7 +2,7 @@
 #
 # If you don't want to install into $(TOP) then
 # define INSTALL_LOCATION here
-#INSTALL_LOCATION=<fullpathname>
+#INSTALL_LOCATION=${HOME}
 
 # Extensions don't normally build shared libraries 
 SHARED_LIBRARIES = NO

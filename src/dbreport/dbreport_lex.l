@@ -13,11 +13,11 @@ value	[a-zA-Z0-9_\,\./\*#\[\]%: ;!|\'\-&\(\)@\?\+<>=\$\{\}\^\~]
 "field"	    { return(FIELD); }
 "grecord"   { return(RECORD); }
 "record"    { return(RECORD); }
-"container" {  return(CONTAINER); }
-"database"  {  return(DATABASE); }
-"nowhere"   {  return(NOWHERE); }
-"info"      {  return(FIELD); }
-"alias"     {  return(FIELD); }
+"container" { return(CONTAINER); }
+"database"  { return(DATABASE); }
+"nowhere"   { return(NOWHERE); }
+"info"      { return(FIELD); }
+"alias"     { return(FIELD); }
 
 \"{value}*\"    { yylval.Str=(char *)malloc(strlen((const char*) yytext)+1); strcpy(yylval.Str,yytext+1); yylval.Str[strlen((const char*) yylval.Str)-1] = '\0'; return(VALUE); }
 
