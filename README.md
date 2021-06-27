@@ -26,3 +26,7 @@ https://www.slac.stanford.edu/grp/cd/soft/epics/extensions/dbreport.txt
 The dbVerbose tool outputs a fully expanded database (i.e. one with all fields of every record listed, even where the field value is identical to the default) to standard output.
 
 https://epics.anl.gov/extensions/dbVerbose/index.php
+
+## recordSort.pl
+
+https://epics.anl.gov/tech-talk/2009/msg01757.php
