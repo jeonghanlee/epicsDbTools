@@ -1,6 +1,7 @@
 # Makefile at the top of an extensions tree
 
-TOP = .
+
+TOP = $(CURDIR)
 include $(TOP)/configure/CONFIG
 DIRS += configure
 DIRS += src

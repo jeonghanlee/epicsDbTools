@@ -16,7 +16,11 @@ include $(TOP)/configure/CONFIG
 
 PROD_HOST = dbreport
 
-PROD_LIBS += Com
+ifdef BASE_3_15
+PROD_LIBS += dbCore Com
+else
+PROD_LIBS += dbStaticHost Com
+endif
 
 DOCS = dbreport.txt
 

@@ -13,11 +13,10 @@
 
 # Define INSTALL_LOCATION in CONFIG_SITE
 
-EPICS_EXTENSIONS = $(TOP)
-
 # Locations of external modules
 
 # OAG_APPS may be needed by the SDDS extension
 #OAG_APPS = $(TOP)/../../oag/apps
 
-EPICS_BASE = /home/jeonglee/epics/debian-10/7.0.5/base
+EPICS_BASE = ${EPICS_PATH}/base
+
