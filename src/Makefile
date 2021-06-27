@@ -1,8 +1,7 @@
 TOP = ..
 include $(TOP)/configure/CONFIG
 
-DIRS += dbreport
-DIRS += dbVerbose
+DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *db*))
 
 include $(TOP)/configure/RULES_DIRS
 

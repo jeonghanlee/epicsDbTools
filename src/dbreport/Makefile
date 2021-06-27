@@ -22,8 +22,6 @@ else
 PROD_LIBS += dbStaticHost Com
 endif
 
-DOCS = dbreport.txt
-
 include $(TOP)/configure/RULES
 
 dbreport.c: dbreport_lex.c

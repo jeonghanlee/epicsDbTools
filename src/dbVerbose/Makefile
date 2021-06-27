@@ -12,14 +12,14 @@
 TOP = ../..
 include $(TOP)/configure/CONFIG
 
+PROD_HOST = dbVerbose
+PROD_SRCS = dbVerbose.c
+
 ifdef BASE_3_15
 PROD_LIBS += dbCore Com
 else
 PROD_LIBS += dbStaticHost Com
 endif
-
-SRCS.c = dbVerbose.c
-PROD_HOST = dbVerbose
 
 include $(TOP)/configure/RULES
 
