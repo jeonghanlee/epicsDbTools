@@ -1,7 +1,7 @@
 # EPICS Legacy DB Tools
 
 This repository has two EPICS Legacy DB tools such as `dbreport` and `dbVerbose`.
-Since these are the legacy tools, which no one care about them these days.
+Since these are the legacy tools, no one care about them these days.
 
 I want to explore the giant itself after standing his shoulder a long time to look
 back what the previous generation and brilliant engineers did solve their own problems 
